@@ -10,7 +10,7 @@ from time import gmtime, strftime
 from torch.utils.data.dataset import Dataset
 from random import randint
 
-BS = 1000 #Batch size 60 in order to get 1000 minibatches
+BS = 1000 
 
 """ Load data from the mnist dataset """
 def load_data(mini=False):
@@ -39,7 +39,7 @@ def load_data(mini=False):
 
 
     """ Using ordinary lists temporarily before converting this list of data into np -> pytorch array.
-    Unsure if there's a better way, if there is. """
+    Unsure if there's a better way """
     imgs, lbls = [], []
 
     flbl = open(fname_lbl_tr, 'rb')
@@ -58,7 +58,6 @@ def load_data(mini=False):
     fimg.close()
     flbl.close()
 
-    #List -> np array -> pytorch array. Convert from int8 -> float. Int8 seems to be interpreted as a char?
     tr_imgs = torch.from_numpy(np.array(imgs)).to(dtype= torch.float)
     tr_lbls = torch.from_numpy(np.array(lbls)).to(dtype= torch.float)
 
@@ -81,7 +80,6 @@ def load_data(mini=False):
         te_imgs = torch.from_numpy(np.array(imgs)).to(dtype=torch.float)
         te_lbls = torch.from_numpy(np.array(lbls)).to(dtype=torch.float)
 
-        #Save files in order to set up preloading on another run.
         with open(os.path.join(".", "data/lin_train_mini.pt"), "wb") as f:
             torch.save((tr_imgs, tr_lbls), f)
         
@@ -108,7 +106,6 @@ def load_data(mini=False):
         te_imgs = torch.from_numpy(np.array(imgs)).to(dtype=torch.float)
         te_lbls = torch.from_numpy(np.array(lbls)).to(dtype=torch.float)
 
-        #Save files in order to set up preloading on another run.
         with open(os.path.join(".", "data/lin_train.pt"), "wb") as f:
             torch.save((tr_imgs, tr_lbls), f)
         
@@ -153,8 +150,6 @@ def to_onehot(num):
     l[int(num)] = 1
     return l
 
-""" Input -> Hidden layer (am_l neurons) -> output layer. Output is softmaxed since no sigmoid function 
- is used in any of the other layers = values are very large (also the backpropagation won't work without it).""" 
 class Lin_Mnist(nn.Module):
     def __init__(self, am_l, am_n):
         super(Lin_Mnist, self).__init__()
